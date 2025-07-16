@@ -1,3 +1,4 @@
+import os
 from flask import Flask, session, render_template, request, redirect, url_for, send_file
 import joblib
 import pandas as pd
@@ -5,7 +6,7 @@ import io
 from fpdf import FPDF
 
 app = Flask(__name__)
-app.secret_key = 'secret-key'  # à sécuriser en prod
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 
 # Charger le modèle
 model = joblib.load("model/lgbm_clf.pkl")
