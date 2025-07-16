@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot Crédit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: #f6f6f6;
+            padding: 2rem;
+            border-radius: 10px;
+        }
+        .bubble {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        .bot {
+            background-color: #e0e0e0;
+            align-self: flex-start;
+        }
+        .user {
+            background-color: #cce5ff;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        @media screen and (max-width: 600px) {
+            body {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>🤖 Assistant Crédit</h2>
+
+    {% if history|length == 0 %}
+        <p>Bonjour 👋 Je suis votre assistant Crédit pour Tous.<br>
+        Je vais vous poser quelques questions pour estimer vos chances d’obtenir un prêt. Cela ne prend que 2 minutes et reste totalement confidentiel.</p>
+        <p style="font-size: small; color: gray;">🔐 Les informations que vous fournissez ne sont ni enregistrées ni partagées. Ce simulateur respecte le RGPD.</p>
+    {% endif %}
+
+    <div class="chat-box">
+        {% for q, a in history %}
+            <div class="bubble bot">{{ q }}</div>
+            <div class="bubble user">{{ a }}</div>
+        {% endfor %}
+        {% if question %}
+            <div class="bubble bot">{{ question }}</div>
+            <div class="bubble bot" style="font-size: small; color: gray;">{{ helper }}</div>
+        {% endif %}
+    </div>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if question %}
+    <form method="POST" style="margin-top: 20px;">
+        {% if options %}
+            {% for opt in options %}
+                <label><input type="radio" name="response" value="{{ opt }}" required> {{ opt }}</label><br>
+            {% endfor %}
+        {% else %}
+            <input type="text" name="response" autofocus required style="width: 80%;">
+        {% endif %}
+        <br><button type="submit">Envoyer</button>
+    </form>
+    {% elif result %}
+        <hr>
+        <h3>Résultat : {{ result }}</h3>
+        <p>Probabilité de défaut : <strong>{{ proba }}%</strong></p>
+        {% if message %}
+            <p><strong>Évaluation du profil :</strong><br>{{ message|safe }}</p>
+        {% endif %}
+        <a href="/reset">🔁 Recommencer une simulation</a><br><br>
+        {% if download_ready %}
+            <a href="/download" download>📄 Télécharger mon diagnostic en PDF</a>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
