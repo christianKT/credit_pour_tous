@@ -1,6 +1,9 @@
 # Utiliser une image officielle Python
 FROM python:3.10-slim
 
+# Installer la dépendance système manquante
+RUN apt-get update && apt-get install -y libgomp1
+
 # Définir le répertoire de travail
 WORKDIR /app
 
