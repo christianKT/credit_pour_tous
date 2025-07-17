@@ -5,3 +5,4 @@ lightgbm
 joblib
 flask
 fpdf
+gunicorn
