@@ -2,7 +2,10 @@
 FROM python:3.10-slim
 
 # Installer la dépendance système manquante
-RUN apt-get update && apt-get install -y libgomp1
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -11,10 +14,11 @@ WORKDIR /app
 COPY . /app
 
 # Installer les dépendances
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Exposer le port de Flask
-EXPOSE 5000
+# Définir la variable d'environnement Flask
+ENV FLASK_ENV=production
 
-# Lancer l'application Flask
-CMD ["python", "app.py"]
+# Commande de démarrage
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:$PORT"]
