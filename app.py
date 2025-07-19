@@ -154,8 +154,3 @@ def download_pdf():
 def reset():
     session.clear()
     return redirect(url_for("chat"))
-
-# uniquement en local
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 5000))
-#     app.run(host="0.0.0.0", port=port)
