@@ -11,20 +11,20 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 # Charger le modèle
 model = joblib.load("model/lgbm_clf.pkl")
 
-# Liste des questions du chatbot dans l'ordre
+# Liste des questions destinées aux EMPLOYÉS pour analyser un dossier client
 questions = [
-    ("annual_inc", "Quel est votre revenu annuel (€) ?", "Exprimé en brut annuel, sans centimes."),
-    ("loan_amnt", "Quel est le montant du prêt souhaité (€) ?", "Montant total que vous souhaitez emprunter."),
-    ("int_rate", "Quel est le taux d'intérêt proposé (%) ?", "Ex. : 7.5"),
-    ("dti", "Quel est votre ratio dette/revenu (DTI %) ?", "Plus il est bas, mieux c’est. Ex. : 35%"),
-    ("revol_util", "Quel est votre taux d'utilisation du crédit (%) ?", "Ex. : 50% d'utilisation des cartes"),
-    ("credit_history_length", "Depuis combien d'années avez-vous un historique de crédit ?", "Ancienneté en années"),
-    ("pub_rec", "Combien de défaillances publiques avez-vous ?", "Choisissez entre 0 et 3."),
-    ("term", "Quelle est la durée du prêt ?", "En mois : 36 ou 60"),
-    ("home_ownership", "Quel est votre statut de logement ?", "Ex. : Locataire, Propriétaire (hypothèque)"),
-    ("purpose", "Quel est l'objet du prêt ?", "Ex. : Voiture, Travaux, Petite entreprise..."),
-    ("verification", "Votre revenu est-il vérifié ?", "Oui ou Non"),
-    ("installment", "Quel est le montant de la mensualité estimée (€) ?", "Ex. : 450")
+    ("annual_inc", "Quel est le revenu annuel déclaré (€) ?", "Indiqué dans la demande client, brut annuel."),
+    ("loan_amnt", "Quel est le montant du prêt demandé (€) ?", "Montant total sollicité par le client."),
+    ("int_rate", "Quel est le taux d'intérêt appliqué (%) ?", "Ex. : 7.5"),
+    ("dti", "Quel est le DTI (ratio dette/revenu %) du client ?", "Ex. : 35%"),
+    ("revol_util", "Utilisation du crédit renouvelable (%) ?", "Niveau d'utilisation des lignes de crédit existantes."),
+    ("credit_history_length", "Ancienneté de l'historique de crédit (années) ?", "Durée en années depuis la 1re ligne de crédit."),
+    ("pub_rec", "Combien d'incidents publics déclarés ?", "Ex. : défauts, recouvrements, etc."),
+    ("term", "Durée du prêt demandée ?", "Ex. : 36 ou 60 mois"),
+    ("home_ownership", "Statut de logement du client ?", "Locataire, Propriétaire, Autre"),
+    ("purpose", "Objet du prêt ?", "Motif indiqué dans la demande"),
+    ("verification", "Revenu vérifié par justificatif ?", "Oui / Non"),
+    ("installment", "Montant estimé de la mensualité (€) ?", "Simulation ou estimation du prêt.")
 ]
 
 question_options = {
@@ -95,14 +95,14 @@ def chat():
             proba = round(prob * 100, 1)
 
             if prob > 0.65:
-                result = "🔴 Refusé"
-                reco = "Votre profil présente actuellement un risque élevé."
+                result = "🔴 Dossier à risque élevé"
+                reco = "Ce profil client présente un risque de défaut important. Une validation manuelle est recommandée."
             elif prob > 0.35:
-                result = "🟡 Ajusté"
-                reco = "Votre profil est acceptable, mais légèrement à risque. Des ajustements pourraient améliorer votre éligibilité."
+                result = "🟡 Dossier modéré"
+                reco = "Le risque est acceptable mais des pièces complémentaires peuvent être exigées(Analyse complémentaire recommandée.)."
             else:
-                result = "🟢 Accepté"
-                reco = "Félicitations ! Votre profil semble solide."
+                result = "🟢 Dossier favorable"
+                reco = "Le profil du client est conforme aux critères de validation."
 
             session['result'] = result
             session['proba'] = proba
@@ -130,7 +130,7 @@ def download_pdf():
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Simulation de crédit - Résultat", ln=True, align='C')
+    pdf.cell(200, 10, txt="Diagnostic de Solvabilité - Crédit Client", ln=True, align='C')
     pdf.ln(10)
 
     for q, a in session['history']:
@@ -140,11 +140,10 @@ def download_pdf():
 
     pdf.ln(5)
     pdf.cell(0, 10, latin1_safe(f"Probabilité de défaut : {session['proba']}%"), ln=True)
-    pdf.cell(0, 10, latin1_safe(f"Décision : {session['result']}"), ln=True)
+    pdf.cell(0, 10, latin1_safe(f"Évaluation : {session['result']}"), ln=True)
     reco_clean = session['reco'].replace('<br>', '\n')
     pdf.multi_cell(0, 10, latin1_safe(f"Recommandation : {reco_clean}"))
 
-    # Génération propre du PDF en mémoire
     pdf_bytes = pdf.output(dest='S').encode('latin1')
     pdf_output = io.BytesIO(pdf_bytes)
     pdf_output.seek(0)
@@ -156,7 +155,6 @@ def reset():
     session.clear()
     return redirect(url_for("chat"))
 
-# uniquement en local
 # if __name__ == "__main__":
 #     port = int(os.environ.get("PORT", 5000))
 #     app.run(host="0.0.0.0", port=port)

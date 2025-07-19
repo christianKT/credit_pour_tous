@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chatbot Crédit</title>
+    <title>Assistant Crédit - Interne</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial;
-            max-width: 600px;
+            max-width: 700px;
             margin: 2rem auto;
-            background-color: #f6f6f6;
+            background-color: #f9f9f9;
             padding: 2rem;
             border-radius: 10px;
+            border: 1px solid #ccc;
         }
         .bubble {
             margin: 10px 0;
             padding: 10px 15px;
-            border-radius: 20px;
-            max-width: 80%;
+            border-radius: 10px;
+            max-width: 90%;
         }
         .bot {
-            background-color: #e0e0e0;
-            align-self: flex-start;
+            background-color: #e6e6e6;
         }
         .user {
-            background-color: #cce5ff;
-            align-self: flex-end;
-            margin-left: auto;
+            background-color: #d0ebff;
+            text-align: right;
         }
         .chat-box {
             display: flex;
@@ -33,7 +32,11 @@
         }
         .error {
             color: red;
-            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
         }
         @media screen and (max-width: 600px) {
             body {
@@ -44,27 +47,27 @@
     </style>
 </head>
 <body>
-    <h2>🤖 Assistant Crédit</h2>
+    <h2>🔍 Assistant Interne - Évaluation de Dossier</h2>
 
     {% if history|length == 0 %}
-        <p>Bonjour 👋 Je suis votre assistant Crédit pour Tous.<br>
-        Je vais vous poser quelques questions pour estimer vos chances d’obtenir un prêt. Cela ne prend que 2 minutes et reste totalement confidentiel.</p>
-        <p style="font-size: small; color: gray;">🔐 Les informations que vous fournissez ne sont ni enregistrées ni partagées. Ce simulateur respecte le RGPD.</p>
+        <p>Bienvenue dans l'assistant d'évaluation des profils clients.<br>
+        Cet outil vous aide à estimer automatiquement le risque de défaut de paiement selon les informations fournies dans le dossier du client.</p>
+        <p style="font-size: small; color: gray;">🔒 Les données saisies ne sont pas stockées. Application réservée à un usage interne dans le respect du RGPD.</p>
     {% endif %}
 
     <div class="chat-box">
         {% for q, a in history %}
-            <div class="bubble bot">{{ q }}</div>
+            <div class="bubble bot"><strong>{{ q }}</strong></div>
             <div class="bubble user">{{ a }}</div>
         {% endfor %}
         {% if question %}
-            <div class="bubble bot">{{ question }}</div>
+            <div class="bubble bot"><strong>{{ question }}</strong></div>
             <div class="bubble bot" style="font-size: small; color: gray;">{{ helper }}</div>
         {% endif %}
     </div>
 
     {% if error %}
-        <div class="error">{{ error }}</div>
+        <p class="error">{{ error }}</p>
     {% endif %}
 
     {% if question %}
@@ -76,18 +79,20 @@
         {% else %}
             <input type="text" name="response" autofocus required style="width: 80%;">
         {% endif %}
-        <br><button type="submit">Envoyer</button>
+        <br><button type="submit">Valider la réponse</button>
     </form>
+
     {% elif result %}
         <hr>
-        <h3>Résultat : {{ result }}</h3>
-        <p>Probabilité de défaut : <strong>{{ proba }}%</strong></p>
+        <h3>📌 Résultat de l'évaluation</h3>
+        <p><strong>Probabilité de défaut :</strong> {{ proba }}%</p>
+        <p><strong>Statut du dossier :</strong> {{ result }}</p>
         {% if message %}
-            <p><strong>Évaluation du profil :</strong><br>{{ message|safe }}</p>
+            <p><strong>Recommandation :</strong><br>{{ message|safe }}</p>
         {% endif %}
-        <a href="/reset">🔁 Recommencer une simulation</a><br><br>
-        {% if download_ready %}
-            <a href="/download" download>📄 Télécharger mon diagnostic en PDF</a>
+        <br><a href="/reset">🔁 Recommencer une évaluation</a>
+        {% if download_ready %}<br>
+            <a href="/download" download>📄 Télécharger le diagnostic</a>
         {% endif %}
     {% endif %}
 </body>
