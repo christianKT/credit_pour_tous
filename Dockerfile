@@ -21,4 +21,4 @@ RUN pip install -r requirements.txt
 ENV FLASK_ENV=production
 
 # Commande de démarrage
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:$PORT"]
+CMD gunicorn app:app --bind 0.0.0.0:$PORT
