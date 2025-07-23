@@ -43,7 +43,7 @@ Faciliter l'évaluation des demandes de prêt en automatisant l'analyse du risqu
 ```
 credit_pour_tous/
 │
-├── app.py                     # Application principale Streamlit
+├── app.py                     # Application principale flask
 ├── requirements.txt           # Dépendances Python
 ├── README.md                  # Présentation du projet
 │
