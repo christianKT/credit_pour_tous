@@ -43,16 +43,28 @@ Faciliter l'évaluation des demandes de prêt en automatisant l'analyse du risqu
 ```
 credit_pour_tous/
 │
-├── app.py                     # Application principale flask
-├── requirements.txt           # Dépendances Python
-├── README.md                  # Présentation du projet
+├── app.py                          # Script principal Flask
+├── requirements.txt               # Dépendances Python
+├── Dockerfile                     # Image Docker pour le déploiement
+├── README.md                      # Présentation du projet
+├── .gitignore                     # Fichiers/dossiers à ignorer
 │
 ├── model/
-│   ├── lgbm_clf.pkl        # Modèle lgbm pré-entraîné
+│   └── lgbm_clf.pkl               # Modèle LGBM pré-entraîné
 │
+├── templates/
+│   └── chat.html                  # Interface HTML du chatbot
 │
-└── templates/
-    └── chat.html/          # Template HTML pour le chatbot
+├── notebooks/                     # Notebooks d'analyse et modélisation
+│   ├── 1_EDA.ipynb                # Analyse exploratoire
+│   └── 2_model_training.ipynb     # Construction et évaluation du modèle
+│
+└── data/
+    ├── raw/                       
+    │   └── Classeur1.csv          # Données brutes (à ne pas versionner)
+    │
+    └── processed_data/
+        └── features.csv           # Données traitées (features)
 
 ```
 
