@@ -11,10 +11,10 @@ __pycache__/
 *.py[cod]
 *.pkl
 *.joblib
+!model/*.pkl
 
 # Données sensibles ou volumineuses
-*.csv
-data/simulation_result/*.csv
+
 
 # Cache Streamlit
 .streamlit/config.toml
@@ -22,3 +22,5 @@ data/simulation_result/*.csv
 
 # Logs (optionnel)
 *.log
+
+**/.ipynb_checkpoints
