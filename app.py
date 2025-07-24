@@ -56,6 +56,14 @@ def chat():
         user_input = request.form['response'].strip()
         options = question_options.get(key)
 
+        # Convertir l'ancienneté de crédit en jours
+        if key == "credit_history_length":
+            try:
+                user_input = str(int(float(user_input) * 365))
+            except ValueError:
+                error = "Veuillez entrer un nombre d'années valide."
+                return render_template("chat.html", question=label, helper=questions[step][2], history=history, error=error, options=options)
+
         if options and user_input not in options:
             error = "Veuillez sélectionner une option valide."
             return render_template("chat.html", question=label, helper=questions[step][2], history=history, error=error, options=options)
@@ -94,10 +102,10 @@ def chat():
             prob = model.predict_proba(df)[0][1]
             proba = round(prob * 100, 1)
 
-            if prob > 0.65:
+            if prob > 0.55:
                 result = "🔴 Dossier à risque élevé"
                 reco = "Ce profil client présente un risque de défaut important. Une validation manuelle est recommandée."
-            elif prob > 0.35:
+            elif prob > 0.30:
                 result = "🟡 Dossier modéré"
                 reco = "Le risque est acceptable mais des pièces complémentaires peuvent être exigées(Analyse complémentaire recommandée.)."
             else:
@@ -154,3 +162,7 @@ def download_pdf():
 def reset():
     session.clear()
     return redirect(url_for("chat"))
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
