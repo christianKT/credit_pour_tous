@@ -60,7 +60,7 @@ credit_pour_tous/
 
 ## 🚀 Déploiement
 
-Cette app peut être facilement déployée sur **Streamlit Cloud** :
+Cette app peut être facilement déployée sur **render** :
 
 1. Fork ou clone ce repo
 2. Assure-toi que `requirements.txt` est bien défini
